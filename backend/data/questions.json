@@ -1,0 +1,17 @@
+[
+  {"q":"What is the output of print(2 ** 3)?","opts":["4","6","8","9"],"c":2,"lang":"Python","topic":"Basics","diff":"Easy","exp":"2 ** 3 \u2192 8 (exponentiation)."},
+  {"q":"Which keyword defines a function in Python?","opts":["func","def","function","define"],"c":1,"lang":"Python","topic":"Functions","diff":"Easy","exp":"Use 'def' to define a function."},
+  {"q":"Which data structure follows LIFO?","opts":["Queue","Stack","Heap","Tree"],"c":1,"lang":"CS","topic":"DSA","diff":"Easy","exp":"Stacks are Last-In-First-Out."},
+  {"q":"What does '===' check in JavaScript?","opts":["Value only","Reference only","Value and type","Nothing"],"c":2,"lang":"JavaScript","topic":"Basics","diff":"Easy","exp":"Strict equality checks value and type."},
+  {"q":"Binary search on a sorted array is?","opts":["O(n)","O(log n)","O(n log n)","O(1)"],"c":1,"lang":"CS","topic":"Algorithms","diff":"Medium","exp":"Halves the space each step \u2192 O(log n)."},
+  {"q":"SQL clause that filters after aggregation?","opts":["WHERE","HAVING","GROUP BY","ORDER BY"],"c":1,"lang":"SQL","topic":"Queries","diff":"Medium","exp":"HAVING filters groups from GROUP BY."},
+  {"q":"Which Python collection is unordered & unique?","opts":["list","tuple","set","dict"],"c":2,"lang":"Python","topic":"Collections","diff":"Easy","exp":"set() keeps unique elements, unordered."},
+  {"q":"JS: add element to end of array?","opts":["push()","pop()","shift()","unshift()"],"c":0,"lang":"JavaScript","topic":"Arrays","diff":"Easy","exp":"push() appends to the end."},
+  {"q":"Which HTTP method is idempotent?","opts":["POST","PATCH","GET","None"],"c":2,"lang":"Web","topic":"HTTP","diff":"Medium","exp":"GET should not modify state."},
+  {"q":"Big-O O(1) means?","opts":["Constant","Linear","Quadratic","Exponential"],"c":0,"lang":"CS","topic":"Complexity","diff":"Easy","exp":"Constant time."},
+  {"q":"Python: sum(range(3)) = ?","opts":["0","3","6","9"],"c":1,"lang":"Python","topic":"Loops","diff":"Medium","exp":"0+1+2=3."},
+  {"q":"Lowercase in Python?","opts":["lower()","upper()","title()","capitalize()"],"c":0,"lang":"Python","topic":"Strings","diff":"Easy","exp":"str.lower()."},
+  {"q":"JS block-scoped keyword?","opts":["var","let","function","with"],"c":1,"lang":"JavaScript","topic":"Scopes","diff":"Medium","exp":"let/const are block scoped."},
+  {"q":"Promises: always runs?","opts":["then","catch","finally","await"],"c":2,"lang":"JavaScript","topic":"Promises","diff":"Medium","exp":"finally() runs after then/catch."},
+  {"q":"Join returning only matches?","opts":["LEFT","RIGHT","FULL","INNER"],"c":3,"lang":"SQL","topic":"Joins","diff":"Medium","exp":"INNER JOIN \u2192 intersection."}
+]
