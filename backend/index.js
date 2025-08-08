@@ -1,111 +1,67 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const dotenv = require('dotenv');
 
 const Question = require('./models/Question');
 const Score = require('./models/Score');
 
-// Load environment variables from .env file
-dotenv.config();
-
 const app = express();
-const PORT = process.env.PORT || 4000;
-const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'changeme';
-
-app.use(cors());
 app.use(express.json());
+app.use(cors()); // allow all; tighten with origin later
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => {
-  console.log('Connected to MongoDB');
-}).catch((err) => {
-  console.error('MongoDB connection error:', err);
-});
+const PORT = process.env.PORT || 4000;
+const MONGODB_URI = process.env.MONGODB_URI;
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'dev_token';
+const DB_NAME = 'mcq';
 
-// Fetch paginated questions with optional filters
+mongoose.connect(MONGODB_URI, { dbName: DB_NAME })
+  .then(()=> console.log('Mongo connected'))
+  .catch(e=> { console.error('Mongo error', e); process.exit(1); });
+
+// GET /api/questions?page=1&limit=20&lang=&topic=&diff=
 app.get('/api/questions', async (req, res) => {
-  try {
-    const { page = 1, limit = 20, lang, topic, diff } = req.query;
-    const query = {};
-    if (lang) query.lang = lang;
-    if (topic) query.topic = topic;
-    if (diff) query.diff = diff;
-
-    const questions = await Question.find(query)
-      .skip((page - 1) * limit)
-      .limit(parseInt(limit));
-    res.json(questions);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
-  }
+  const { page=1, limit=20, lang, topic, diff } = req.query;
+  const q = {};
+  if (lang) q.lang = lang;
+  if (topic) q.topic = topic;
+  if (diff) q.diff = diff;
+  const skip = (Math.max(1, +page)-1) * Math.min(100, +limit);
+  const items = await Question.find(q).skip(skip).limit(Math.min(100, +limit));
+  const total = await Question.countDocuments(q);
+  res.json({ items, total, page:+page, limit:+limit });
 });
 
-// Bulk insert or replace questions (admin only)
+// POST /api/questions/bulk  (admin)
 app.post('/api/questions/bulk', async (req, res) => {
-  if (req.headers['x-admin-token'] !== ADMIN_TOKEN) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-  try {
-    const items = req.body;
-    if (!Array.isArray(items)) {
-      return res.status(400).json({ error: 'Body must be an array' });
-    }
-    // replace existing questions
-    await Question.deleteMany({});
-    await Question.insertMany(items);
-    res.json({ inserted: items.length });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
-  }
+  const token = req.headers['x-admin-token'];
+  if (token !== ADMIN_TOKEN) return res.status(401).send('Unauthorized');
+  const arr = req.body;
+  if (!Array.isArray(arr)) return res.status(400).send('Array required');
+  await Question.deleteMany({});
+  await Question.insertMany(arr);
+  res.json({ inserted: arr.length });
 });
 
-// Submit or update score
+// POST /api/score  { name, xp, best }
 app.post('/api/score', async (req, res) => {
-  try {
-    const { name, xp, best } = req.body;
-    if (!name) {
-      return res.status(400).json({ error: 'Name required' });
-    }
-    let score = await Score.findOne({ name });
-    if (!score) {
-      score = new Score({ name, xp: xp || 0, best: best || 0 });
-    } else {
-      // update xp and best if greater
-      score.xp = Math.max(score.xp, xp || 0);
-      score.best = Math.max(score.best, best || 0);
-    }
-    await score.save();
-    res.json(score);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
-  }
+  const { name, xp=0, best=0 } = req.body || {};
+  if (!name) return res.status(400).send('name required');
+  const doc = await Score.findOneAndUpdate(
+    { name },
+    { $max: { best }, $set: { name }, $inc: { xp } },
+    { upsert: true, new: true }
+  );
+  res.json(doc);
 });
 
-// Fetch leaderboard
+// GET /api/leaderboard?by=best|xp&limit=25
 app.get('/api/leaderboard', async (req, res) => {
-  try {
-    const { sort = 'xp', limit = 10 } = req.query;
-    const sortField = sort === 'best' ? 'best' : 'xp';
-    const scores = await Score.find().sort({ [sortField]: -1 }).limit(parseInt(limit));
-    res.json(scores);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
-  }
+  const by = req.query.by === 'xp' ? 'xp' : 'best';
+  const limit = Math.min(50, +(req.query.limit || 25));
+  const rows = await Score.find().sort({ [by]: -1 }).limit(limit);
+  res.json(rows.map(r => ({ name: r.name, xp: r.xp, best: r.best })));
 });
 
-// Root endpoint
-app.get('/', (req, res) => {
-  res.send('MCQ Reels API');
-});
+app.listen(PORT, () => console.log('API on :' + PORT));
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
