@@ -275,31 +275,31 @@ export default function App(){
           </div>
           <div className="px-3 pb-2 flex gap-2 text-sm">
             <div className="rounded-xl px-3 py-1" style={{ background:'var(--chipBg)', border:'1px solid var(--cardBorder)' }}>XP: {xp}</div>
-            <div className="rounded-xl px-3 py-1" style{{ background:'var(--chipBg)', border:'1px solid var(--cardBorder)' }}>Streak: {streak}</div>
+            <div className="rounded-xl px-3 py-1" style={{ background:'var(--chipBg)', border:'1px solid var(--cardBorder)' }}>Streak: {streak}</div>
             <div className="rounded-xl px-3 py-1" style={{ background:'var(--chipBg)', border:'1px solid var(--cardBorder)' }}>Best: {best}</div>
-            <button className="rounded-xl px-3 py-1" style{{ background:'linear-gradient(90deg,#7c3aed,#a21caf)', color:'#fff' }} onClick={resetProgress}>Reset</button>
+            <button className="rounded-xl px-3 py-1" style={{ background:'linear-gradient(90deg,#7c3aed,#a21caf)', color:'#fff' }} onClick={resetProgress}>Reset</button>
           </div>
           <div className="px-3 pb-2 flex gap-2 text-xs">
-            <button className="px-2 py-1 rounded-lg" style{{ border:'1px solid var(--cardBorder)' }} onClick={loadThousand}>Load 1000+</button>
-            <button className="px-2 py-1 rounded-lg" style{{ border:'1px solid var(--cardBorder)' }} onClick={importQuestionsPrompt}>Import JSON</button>
-            <button className="px-2 py-1 rounded-lg" style{{ border:'1px solid var(--cardBorder)' }} onClick={()=> fileRef.current?.click()}>Upload JSON</button>
+            <button className="px-2 py-1 rounded-lg" style={{ border:'1px solid var(--cardBorder)' }} onClick={loadThousand}>Load 1000+</button>
+            <button className="px-2 py-1 rounded-lg" style={{ border:'1px solid var(--cardBorder)' }} onClick={importQuestionsPrompt}>Import JSON</button>
+            <button className="px-2 py-1 rounded-lg" style={{ border:'1px solid var(--cardBorder)' }} onClick={()=> fileRef.current?.click()}>Upload JSON</button>
             <input ref={fileRef} type="file" accept="application/json,.json" className="hidden" onChange={onFilePick} />
-            <div className="ml-auto text-xs flex items-center gap-2" style{{ color:'var(--muted)' }}>
+            <div className="ml-auto text-xs flex items-center gap-2" style={{ color:'var(--muted)' }}>
               <span>Player:</span>
-              <button className="px-2 py-1 rounded-lg" style{{ border:'1px solid var(--cardBorder)' }} onClick={()=>{ const v = prompt('Change your name', name || ''); if(v!=null) setName(v.trim()); }}>{name || '—'}</button>
+              <button className="px-2 py-1 rounded-lg" style={{ border:'1px solid var(--cardBorder)' }} onClick={()=>{ const v = prompt('Change your name', name || ''); if(v!=null) setName(v.trim()); }}>{name || '—'}</button>
             </div>
           </div>
         </div>
 
         {/* Body */}
         {tab==='play' ? (
-          <div ref={listRef} className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-3" style{{ scrollSnapType:'y mandatory' }}>
+          <div ref={listRef} className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-3" style={{ scrollSnapType:'y mandatory' }}>
             {visible.map((q, i)=> (
-              <div key={i} style{{ scrollSnapAlign:'start' }}>
+              <div key={i} style={{ scrollSnapAlign:'start' }}>
                 <Card q={q} onAnswer={onAnswer} />
               </div>
             ))}
-            {visible.length===0 && <div className="px-4 py-6 text-sm" style{{ color:'var(--muted)' }}>No questions.</div>}
+            {visible.length===0 && <div className="px-4 py-6 text-sm" style={{ color:'var(--muted)' }}>No questions.</div>}
           </div>
         ) : (
           <div className="flex-1 overflow-y-auto overflow-x-hidden">
